@@ -1,0 +1,20 @@
+[22-Apr-2025 14:44:58 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/delicado/public_html/config/app.php:19
+Stack trace:
+#0 {main}
+  thrown in /home/delicado/public_html/config/app.php on line 19
+[28-Apr-2025 14:20:44 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/delicado/public_html/config/app.php:19
+Stack trace:
+#0 {main}
+  thrown in /home/delicado/public_html/config/app.php on line 19
+[13-Sep-2025 13:36:06 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/delicado/public_html/config/app.php:19
+Stack trace:
+#0 {main}
+  thrown in /home/delicado/public_html/config/app.php on line 19
+[13-Sep-2025 13:36:06 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/delicado/public_html/config/database.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/delicado/public_html/config/database.php on line 18
+[13-Sep-2025 13:36:06 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/delicado/public_html/config/cache.php:21
+Stack trace:
+#0 {main}
+  thrown in /home/delicado/public_html/config/cache.php on line 21

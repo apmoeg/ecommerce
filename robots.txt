@@ -1,0 +1,3 @@
+User-agent: *
+Disallow: /login/admin/
+Sitemap: https://thedelicado.com/sitemap-2025-12-14-113122.xml
