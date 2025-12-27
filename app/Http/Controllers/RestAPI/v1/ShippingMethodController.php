@@ -28,12 +28,29 @@ class ShippingMethodController extends Controller
 
     public function shipping_methods_by_seller(Request $request, $id, $seller_is)
     {
+        // When admin flat shipping is enabled, return empty array (no shipping methods to choose)
+        if (Helpers::isAdminFlatShippingEnabled()) {
+            return response()->json([
+                'shipping_type' => 'admin_flat_shipping',
+                'shipping_methods' => [],
+                'admin_flat_rate' => Helpers::getAdminFlatShippingRate()
+            ], 200);
+        }
+        
         $seller_is = $seller_is == 'admin' ? 'admin' : 'seller';
         return response()->json(Helpers::getShippingMethods($id, $seller_is), 200);
     }
 
     public function choose_for_order(Request $request)
     {
+        // When admin flat shipping is enabled, ignore shipping method selection
+        if (Helpers::isAdminFlatShippingEnabled()) {
+            return response()->json([
+                'message' => translate('Shipping is automatically calculated'),
+                'shipping_cost' => Helpers::getAdminFlatShippingRate()
+            ], 200);
+        }
+        
         $validator = Validator::make($request->all(), [
             'cart_group_id' => 'required',
             'id' => 'required'
@@ -71,6 +88,15 @@ class ShippingMethodController extends Controller
 
     public function chosen_shipping_methods(Request $request): JsonResponse
     {
+        // When admin flat shipping is enabled, return admin flat shipping info
+        if (Helpers::isAdminFlatShippingEnabled()) {
+            return response()->json([
+                'shipping_type' => 'admin_flat_shipping',
+                'shipping_cost' => Helpers::getAdminFlatShippingRate(),
+                'message' => translate('Admin flat shipping is applied')
+            ], 200);
+        }
+        
         $groupIds = CartManager::get_cart_group_ids(request: $request);
         $cartShipping = CartShipping::whereIn('cart_group_id', $groupIds)->get();
 
@@ -87,6 +113,14 @@ class ShippingMethodController extends Controller
 
     public function check_shipping_type(Request $request)
     {
+        // When admin flat shipping is enabled, return admin_flat_shipping type
+        if (Helpers::isAdminFlatShippingEnabled()) {
+            return response()->json([
+                'shipping_type' => 'admin_flat_shipping',
+                'shipping_cost' => Helpers::getAdminFlatShippingRate()
+            ], 200);
+        }
+        
         $validator = Validator::make($request->all(), [
             'seller_is' => 'required',
             'seller_id' => 'required'
