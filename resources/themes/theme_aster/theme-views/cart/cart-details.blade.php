@@ -101,54 +101,61 @@
                                                     </span>
                                                     @endif
                                                 </div>
-                                                @if($physical_product && $shippingMethod=='sellerwise_shipping' && $shipping_type == 'order_wise')
-                                                    @php
-                                                        $choosen_shipping=CartShipping::where(['cart_group_id'=>$cartItem['cart_group_id']])->first()
-                                                    @endphp
-
-                                                    @if(isset($choosen_shipping)===false)
-                                                        @php $choosen_shipping['shipping_method_id']=0 @endphp
-                                                    @endif
-                                                    @php
-                                                        $shippings=Helpers::getShippingMethods($cartItem['seller_id'],$cartItem['seller_is'])
-                                                    @endphp
+                                                @php($adminFlatShippingEnabled = \App\Utils\Helpers::isAdminFlatShippingEnabled())
+                                                
+                                                @if($adminFlatShippingEnabled)
+                                                    {{-- Admin flat shipping: Show nothing per vendor, shipping will be shown once in order summary --}}
+                                                @else
+                                                    {{-- Legacy shipping method selection --}}
                                                     @if($physical_product && $shippingMethod=='sellerwise_shipping' && $shipping_type == 'order_wise')
-                                                        @if(count($shippings) > 0)
-                                                            <div class="border bg-white rounded custom-ps-3">
-                                                                <div class="shiiping-method-btn d-flex gap-2 p-2 flex-wrap">
-                                                                    <div
-                                                                        class="flex-middle flex-nowrap fw-semibold text-dark gap-2">
-                                                                        <i class="bi bi-truck"></i>
-                                                                        {{ translate('Shipping_Method') }}:
-                                                                    </div>
-                                                                    <div class="dropdown">
-                                                                        <button type="button" class="border-0 bg-transparent d-flex gap-2 align-items-center dropdown-toggle text-dark p-0" data-bs-toggle="dropdown" aria-expanded="false">
-                                                                                <?php
-                                                                                $shippings_title = translate('choose_shipping_method');
-                                                                                foreach ($shippings as $shipping) {
-                                                                                    if ($choosen_shipping['shipping_method_id'] == $shipping['id']) {
-                                                                                        $shippings_title = ucfirst($shipping['title']) . ' ( ' . $shipping['duration'] . ' ) ' . webCurrencyConverter($shipping['cost']);
+                                                        @php
+                                                            $choosen_shipping=CartShipping::where(['cart_group_id'=>$cartItem['cart_group_id']])->first()
+                                                        @endphp
+
+                                                        @if(isset($choosen_shipping)===false)
+                                                            @php $choosen_shipping['shipping_method_id']=0 @endphp
+                                                        @endif
+                                                        @php
+                                                            $shippings=Helpers::getShippingMethods($cartItem['seller_id'],$cartItem['seller_is'])
+                                                        @endphp
+                                                        @if($physical_product && $shippingMethod=='sellerwise_shipping' && $shipping_type == 'order_wise')
+                                                            @if(count($shippings) > 0)
+                                                                <div class="border bg-white rounded custom-ps-3">
+                                                                    <div class="shiiping-method-btn d-flex gap-2 p-2 flex-wrap">
+                                                                        <div
+                                                                            class="flex-middle flex-nowrap fw-semibold text-dark gap-2">
+                                                                            <i class="bi bi-truck"></i>
+                                                                            {{ translate('Shipping_Method') }}:
+                                                                        </div>
+                                                                        <div class="dropdown">
+                                                                            <button type="button" class="border-0 bg-transparent d-flex gap-2 align-items-center dropdown-toggle text-dark p-0" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                                    <?php
+                                                                                    $shippings_title = translate('choose_shipping_method');
+                                                                                    foreach ($shippings as $shipping) {
+                                                                                        if ($choosen_shipping['shipping_method_id'] == $shipping['id']) {
+                                                                                            $shippings_title = ucfirst($shipping['title']) . ' ( ' . $shipping['duration'] . ' ) ' . webCurrencyConverter($shipping['cost']);
+                                                                                        }
                                                                                     }
-                                                                                }
-                                                                                ?>
-                                                                            {{ $shippings_title }}
-                                                                        </button>
-                                                                        <ul class="dropdown-menu dropdown-left-auto bs-dropdown-min-width--8rem">
-                                                                            @foreach($shippings as $shipping)
-                                                                                <li class="cursor-pointer set-shipping-id" data-id="{{$shipping['id']}}" data-cart-group="{{$cartItem['cart_group_id']}}">
-                                                                                    {{$shipping['title'].' ( '.$shipping['duration'].' ) '.webCurrencyConverter($shipping['cost'])}}
-                                                                                </li>
-                                                                            @endforeach
-                                                                        </ul>
+                                                                                    ?>
+                                                                                {{ $shippings_title }}
+                                                                            </button>
+                                                                            <ul class="dropdown-menu dropdown-left-auto bs-dropdown-min-width--8rem">
+                                                                                @foreach($shippings as $shipping)
+                                                                                    <li class="cursor-pointer set-shipping-id" data-id="{{$shipping['id']}}" data-cart-group="{{$cartItem['cart_group_id']}}">
+                                                                                        {{$shipping['title'].' ( '.$shipping['duration'].' ) '.webCurrencyConverter($shipping['cost'])}}
+                                                                                    </li>
+                                                                                @endforeach
+                                                                            </ul>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
-                                                            </div>
-                                                        @else
-                                                            <span class="badge badge-soft-danger cursor-pointer border-danger border fs-12" data-bs-toggle="tooltip"
-                                                                    data-bs-placement="top"
-                                                                    title="{{ translate('No_shipping_options_available_at_this_shop') }}, {{ translate('please_remove_all_items_from_this_shop') }}">
-                                                                {{ translate('shipping_Not_Available') }}
-                                                            </span>
+                                                            @else
+                                                                <span class="badge badge-soft-danger cursor-pointer border-danger border fs-12" data-bs-toggle="tooltip"
+                                                                        data-bs-placement="top"
+                                                                        title="{{ translate('No_shipping_options_available_at_this_shop') }}, {{ translate('please_remove_all_items_from_this_shop') }}">
+                                                                    {{ translate('shipping_Not_Available') }}
+                                                                </span>
+                                                            @endif
                                                         @endif
                                                     @endif
                                                 @endif
@@ -532,7 +539,9 @@
                                 $admin_shipping = ShippingType::where('seller_id', 0)->first();
                                 $shipping_type = isset($admin_shipping) === true ? $admin_shipping->shipping_type : 'order_wise';
                                 ?>
-                            @if ($shipping_type == 'order_wise' && $physical_product)
+                            @php($adminFlatShippingEnabled = \App\Utils\Helpers::isAdminFlatShippingEnabled())
+                            
+                            @if(!$adminFlatShippingEnabled && $shipping_type == 'order_wise' && $physical_product)
                                 @php($shippings=Helpers::getShippingMethods(1,'admin'))
                                 @php($choosen_shipping=CartShipping::where(['cart_group_id'=>$cartItem['cart_group_id']])->first())
 

@@ -11,6 +11,7 @@
             @php($cartGroupIds=\App\Utils\CartManager::get_cart_group_ids())
             @php($getShippingCost=\App\Utils\CartManager::get_shipping_cost(type: 'checked'))
             @php($getShippingCostSavedForFreeDelivery=\App\Utils\CartManager::getShippingCostSavedForFreeDelivery(type: 'checked'))
+            @php($adminFlatShippingEnabled = \App\Utils\Helpers::isAdminFlatShippingEnabled())
             @if($cart->count() > 0)
                 @foreach($cart as $key => $cartItem)
                     @php($subTotal+=$cartItem['price']*$cartItem['quantity'])
@@ -76,7 +77,13 @@
                 </span>
             </div>
             <div class="d-flex justify-content-between">
-                <span class="cart_title">{{translate('shipping')}}</span>
+                <span class="cart_title">
+                    @if($adminFlatShippingEnabled)
+                        {{translate('shipping')}} ({{ translate('admin_flat_rate') }})
+                    @else
+                        {{translate('shipping')}}
+                    @endif
+                </span>
                 <span class="cart_value">
                     {{ webCurrencyConverter(amount: $totalShippingCost) }}
                 </span>
