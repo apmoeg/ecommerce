@@ -114,6 +114,72 @@
             </div>
         </div>
 
+        {{-- Admin Flat Shipping Settings --}}
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5 class="text-capitalize mb-0 d-flex align-items-center gap-2">
+                    <img width="20" src="{{dynamicAsset(path: 'public/assets/back-end/img/delivery.png')}}" alt="">
+                    {{translate('admin_flat_shipping')}}
+                </h5>
+            </div>
+            @php($adminFlatShippingRate=getWebConfig('admin_flat_shipping_rate') ?? 0)
+            @php($adminFlatShippingStatus=getWebConfig('admin_flat_shipping_status') ?? 1)
+            <div class="card-body">
+                <form action="{{ route('admin.business-settings.shipping-method.update-admin-flat-shipping') }}" method="post">
+                    @csrf
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="title-color d-flex">{{translate('enable_admin_flat_shipping')}}</label>
+                                <label class="switcher">
+                                    <input type="checkbox" class="switcher_input toggle-switch-message" 
+                                           name="admin_flat_shipping_status" value="1" 
+                                           {{ $adminFlatShippingStatus == 1 ? 'checked' : '' }}
+                                           data-modal-id="toggle-modal"
+                                           data-toggle-id="admin-flat-shipping-status"
+                                           data-on-image="delivery.png"
+                                           data-off-image="delivery.png"
+                                           data-on-title="{{translate('want_to_enable_admin_flat_shipping').'?'}}"
+                                           data-off-title="{{translate('want_to_disable_admin_flat_shipping').'?'}}"
+                                           data-on-message="<p>{{translate('admin_will_charge_a_single_flat_shipping_rate_for_all_orders_regardless_of_number_of_vendors').'.'}}</p>"
+                                           data-off-message="<p>{{translate('the_default_shipping_methods_will_be_used').'.'}}</p>">
+                                    <span class="switcher_control"></span>
+                                </label>
+                                <input type="hidden" name="admin_flat_shipping_status" value="0">
+                            </div>
+                            <div class="mt-2">
+                                <p class="text-muted">
+                                    <img width="16" class="mt-n1"
+                                         src="{{dynamicAsset(path: 'public/assets/back-end/img/info-circle.svg')}}" alt="">
+                                    <strong>{{translate('note').' '.':'}}</strong>
+                                    {{translate('when_enabled_a_single_flat_shipping_rate_will_be_charged_per_order_regardless_of_the_number_of_vendors_Set_rate_to_0_for_free_shipping').'.'}}</p>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="title-color d-flex">{{translate('admin_flat_shipping_rate')}}</label>
+                                <input type="number" step="0.01" min="0" class="form-control" 
+                                       name="admin_flat_shipping_rate" 
+                                       value="{{ $adminFlatShippingRate }}" 
+                                       placeholder="{{translate('enter_shipping_rate')}}" 
+                                       required>
+                                <small class="form-text text-muted">
+                                    {{translate('set_to_0_for_free_shipping')}}
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="col-12 mt-2">
+                            <div class="d-flex justify-content-end gap-10">
+                                <button type="submit" class="btn btn--primary px-5">{{translate('save')}}</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <div id="update_category_shipping_cost">
             <div class="card mt-3">
                 <div class="px-3 pt-4">

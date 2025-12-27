@@ -156,4 +156,30 @@ class ShippingMethodController extends BaseController
         return redirect()->back();
     }
 
+    /**
+     * Update admin flat shipping settings
+     * @param Request $request
+     * @return RedirectResponse
+     */
+    public function updateAdminFlatShipping(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'admin_flat_shipping_rate' => 'required|numeric|min:0',
+            'admin_flat_shipping_status' => 'required|in:0,1',
+        ]);
+        
+        $this->businessSettingRepo->updateOrInsert(
+            type: 'admin_flat_shipping_rate', 
+            value: $request['admin_flat_shipping_rate']
+        );
+        
+        $this->businessSettingRepo->updateOrInsert(
+            type: 'admin_flat_shipping_status', 
+            value: $request['admin_flat_shipping_status']
+        );
+        
+        Toastr::success(translate('Admin flat shipping settings updated successfully'));
+        return redirect()->back();
+    }
+
 }

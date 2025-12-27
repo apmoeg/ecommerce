@@ -26,5 +26,9 @@ enum ShippingMethod
         URI => 'update-shipping-responsibility',
         VIEW => ''
     ];
+    const UPDATE_ADMIN_FLAT_SHIPPING = [
+        URI => 'update-admin-flat-shipping',
+        VIEW => ''
+    ];
 
 }
