@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_sixvalley_ecommerce/features/address/controllers/address_controller.dart';
-import 'package:flutter_sixvalley_ecommerce/features/address/screens/saved_address_list_screen.dart';
-import 'package:flutter_sixvalley_ecommerce/features/address/screens/saved_billing_address_list_screen.dart';
 import 'package:flutter_sixvalley_ecommerce/features/cart/domain/models/cart_model.dart';
 import 'package:flutter_sixvalley_ecommerce/features/checkout/controllers/checkout_controller.dart';
-import 'package:flutter_sixvalley_ecommerce/features/checkout/widgets/payment_method_bottom_sheet_widget.dart';
 import 'package:flutter_sixvalley_ecommerce/features/offline_payment/screens/offline_payment_screen.dart';
 import 'package:flutter_sixvalley_ecommerce/features/profile/controllers/profile_contrroller.dart';
 import 'package:flutter_sixvalley_ecommerce/features/shipping/controllers/shipping_controller.dart';
@@ -24,9 +21,9 @@ import 'package:flutter_sixvalley_ecommerce/common/basewidget/custom_button_widg
 import 'package:flutter_sixvalley_ecommerce/features/checkout/widgets/order_place_dialog_widget.dart';
 import 'package:flutter_sixvalley_ecommerce/common/basewidget/show_custom_snakbar_widget.dart';
 import 'package:flutter_sixvalley_ecommerce/common/basewidget/custom_textfield_widget.dart';
-import 'package:flutter_sixvalley_ecommerce/features/checkout/widgets/choose_payment_widget.dart';
+import 'package:flutter_sixvalley_ecommerce/features/checkout/widgets/inline_choose_payment_widget.dart';
 import 'package:flutter_sixvalley_ecommerce/features/checkout/widgets/coupon_apply_widget.dart';
-import 'package:flutter_sixvalley_ecommerce/features/checkout/widgets/shipping_details_widget.dart';
+import 'package:flutter_sixvalley_ecommerce/features/checkout/widgets/inline_shipping_details_widget.dart';
 import 'package:flutter_sixvalley_ecommerce/features/checkout/widgets/wallet_payment_widget.dart';
 import 'package:flutter_sixvalley_ecommerce/features/dashboard/screens/dashboard_screen.dart';
 import 'package:provider/provider.dart';
@@ -110,13 +107,19 @@ class CheckoutScreenState extends State<CheckoutScreen> {
 
                           Padding(padding: const EdgeInsets.all(Dimensions.paddingSizeDefault),
                             child: CustomButton(onTap: () async {
-                                if(orderProvider.addressIndex == null && widget.hasPhysical) {
-                                  Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => const SavedAddressListScreen()));
+                                // Validate payment method first
+                                bool hasPaymentMethod = orderProvider.paymentMethodIndex != -1 ||
+                                    orderProvider.isCODChecked ||
+                                    orderProvider.isWalletChecked ||
+                                    orderProvider.isOfflineChecked;
+
+                                if (!hasPaymentMethod) {
+                                  showCustomSnackBar(getTranslated('please_select_payment_method', context) ?? 'Please select a payment method', context, isToaster: true);
+                                } else if(orderProvider.addressIndex == null && widget.hasPhysical) {
                                   showCustomSnackBar(getTranslated('select_a_shipping_address', context), context, isToaster: true);
                                 } else if((orderProvider.billingAddressIndex == null && !widget.hasPhysical &&  !_billingAddress)) {
                                   showCustomSnackBar(getTranslated('you_cant_place_order_of_digital_product_without_billing_address', context), context, isToaster: true);
                                 } else if((orderProvider.billingAddressIndex == null && !widget.hasPhysical && !orderProvider.sameAsBilling && _billingAddress) || (orderProvider.billingAddressIndex == null && _billingAddress && !orderProvider.sameAsBilling)){
-                                  Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => const SavedBillingAddressListScreen()));
                                   showCustomSnackBar(getTranslated('select_a_billing_address', context), context, isToaster: true);
                                 }
 
@@ -194,10 +197,8 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                           }}), dismissible: false, willFlip: true);
                                     }
                                     else {
-                                      showModalBottomSheet(
-                                        context: context, isScrollControlled: true, backgroundColor: Colors.transparent,
-                                        builder: (c) => PaymentMethodBottomSheetWidget(onlyDigital: widget.onlyDigital),
-                                      );
+                                      // No payment method selected - show inline error instead of modal
+                                      showCustomSnackBar(getTranslated('please_select_payment_method', context) ?? 'Please select a payment method', context, isToaster: true);
                                     }
                                   }
                                 }
@@ -226,7 +227,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                   Expanded(child: ListView(physics: const BouncingScrollPhysics(),
                       padding: const EdgeInsets.all(0), children: [
                       Padding(padding: const EdgeInsets.only(bottom: Dimensions.paddingSizeDefault),
-                        child: ShippingDetailsWidget(hasPhysical: widget.hasPhysical, billingAddress: _billingAddress, passwordFormKey: passwordFormKey)),
+                        child: InlineShippingDetailsWidget(hasPhysical: widget.hasPhysical, billingAddress: _billingAddress, passwordFormKey: passwordFormKey)),
 
 
                       if(Provider.of<AuthController>(context, listen: false).isLoggedIn())
@@ -236,7 +237,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
 
 
                        Padding(padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeSmall),
-                        child: ChoosePaymentWidget(onlyDigital: widget.onlyDigital)),
+                        child: InlineChoosePaymentWidget(onlyDigital: widget.onlyDigital)),
 
                       Padding(padding: const EdgeInsets.fromLTRB(Dimensions.paddingSizeDefault,
                           Dimensions.paddingSizeDefault, Dimensions.paddingSizeDefault,Dimensions.paddingSizeSmall),
