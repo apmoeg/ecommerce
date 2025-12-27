@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>delicado</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(MARKETING_VERSION)</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.343401628573-jfhngg61rov3tn53kngt107rnvne48hh</string>
+				<string>fb671211005683383</string>
+				<string>app-1-343401628573-ios-0cac7b5dc1ac857d622574</string>
+			</array>
+		</dict>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>FacebookAppID</key>
+	<string>671211005683383</string>
+	<key>FacebookClientToken</key>
+	<string>124e27a610aa68f67bdfde5565d9e913</string>
+	<key>FacebookDisplayName</key>
+	<string>delicado</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
+	<key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <true/>
+    </dict>
+	<key>NSPrivacyAccessedAPICategories</key>
+	<array>
+		<dict>
+			<key>NSPrivacyAccessedAPICategoryFileTimestamp</key>
+			<string>Our app needs to access file timestamps to manage local data synchronization.</string>
+		</dict>
+		<dict>
+			<key>NSPrivacyAccessedAPICategoryDiskSpace</key>
+			<string>Our app requires disk space information to ensure efficient data storage and management.</string>
+		</dict>
+		<dict>
+			<key>NSPrivacyAccessedAPICategorySystemBootTime</key>
+			<string>Our app uses system boot time data for performance analysis and diagnostics.</string>
+		</dict>
+		<dict>
+			<key>NSPrivacyAccessedAPICategoryUserDefaults</key>
+			<string>Our app stores user preferences and settings in UserDefaults for a personalized user experience.</string>
+		</dict>
+	</array>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>Users receive a small alert tone after changing the order delivery status</string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>This app uses Bluetooth to connect with wearables.</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>This app uses Bluetooth to connect with wearables.</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>User can choose date from calender</string>
+	<key>NSCameraUsageDescription</key>
+	<string>User can upload and change her profile picture from Camera and also used in product review section and in chat</string>
+	<key>NSContactsUsageDescription</key>
+	<string>Allow Contacts Access For Details</string>
+	<key>NSDocumentDirectory</key>
+	<integer>1</integer>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>User can set address using phone location for smooth Checkout and hight quality shipping</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>User can set address using phone location for smooth Checkout and hight quality shipping</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>User can set address using phone location for smooth Checkout and hight quality shipping</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Need microphone access for Product review and in chat</string>
+	<key>NSMotionUsageDescription</key>
+	<string>This app will use your motion data for your active tasks</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>User can upload and change her profile picture from PhotoLibrary</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>User can send message or search data by voice</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
+	<key>UIFileSharingEnabled</key>
+	<true/>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIMainStoryboardFile</key>
+	<string>Main</string>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<false/>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+</dict>
+</plist>
