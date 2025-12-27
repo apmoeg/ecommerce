@@ -45,6 +45,7 @@ return [
     'products_cart_details_partials' => 'theme-views.cart.cart-details',
     'cart_list' => 'theme-views.cart.cart-list',
     'order_shipping' => 'theme-views.checkout.shipping',
+    'one_page_checkout' => 'theme-views.checkout.one-page-checkout',
     'product_reviews_partials' => 'theme-views.layouts.partials._product-reviews',
     'product_quick_view_partials' => 'theme-views.layouts.partials.modal._quick-view-data',
     'payment_details' => 'theme-views.checkout.payment',

@@ -961,6 +961,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['admin']],
                 Route::post(ShippingMethod::UPDATE_STATUS[URI], 'updateStatus')->name('update-status');
                 Route::post(ShippingMethod::DELETE[URI], 'delete')->name('delete');
                 Route::post(ShippingMethod::UPDATE_SHIPPING_RESPONSIBILITY[URI], 'updateShippingResponsibility')->name('update-shipping-responsibility');
+                Route::post(ShippingMethod::UPDATE_ADMIN_FLAT_SHIPPING[URI], 'updateAdminFlatShipping')->name('update-admin-flat-shipping');
             });
         });
 

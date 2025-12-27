@@ -93,6 +93,7 @@ Route::group(['namespace' => 'Web', 'middleware' => ['maintenance_mode', 'guestC
 
     Route::controller(WebController::class)->group(function () {
         Route::get('checkout-details', 'checkout_details')->name('checkout-details');
+        Route::get('one-page-checkout', 'one_page_checkout')->name('one-page-checkout');
         Route::get('checkout-shipping', 'checkout_shipping')->name('checkout-shipping');
         Route::get('checkout-payment', 'checkout_payment')->name('checkout-payment');
         Route::get('checkout-review', 'checkout_review')->name('checkout-review');

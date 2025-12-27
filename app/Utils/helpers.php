@@ -1009,6 +1009,19 @@ if (!function_exists('currency_converter')) {
 
         return Helpers::set_symbol(round($amount * $rate, 2));
     }
+
+    public static function getAdminFlatShippingRate(): float
+    {
+        $shippingRate = getWebConfig(name: 'admin_flat_shipping_rate');
+        return $shippingRate ? (float)$shippingRate : 0;
+    }
+
+    public static function isAdminFlatShippingEnabled(): bool
+    {
+        $status = getWebConfig(name: 'admin_flat_shipping_status');
+        // Migration default is '1' (enabled). Return true only if explicitly enabled.
+        return $status !== null && $status == '1';
+    }
 }
 
 

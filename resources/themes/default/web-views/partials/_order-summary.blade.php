@@ -11,6 +11,7 @@
             @php($cartGroupIds=\App\Utils\CartManager::get_cart_group_ids())
             @php($getShippingCost=\App\Utils\CartManager::get_shipping_cost(type: 'checked'))
             @php($getShippingCostSavedForFreeDelivery=\App\Utils\CartManager::getShippingCostSavedForFreeDelivery(type: 'checked'))
+            @php($adminFlatShippingEnabled = \App\Utils\Helpers::isAdminFlatShippingEnabled())
             @if($cart->count() > 0)
                 @foreach($cart as $key => $cartItem)
                     @php($subTotal+=$cartItem['price']*$cartItem['quantity'])
@@ -76,7 +77,13 @@
                 </span>
             </div>
             <div class="d-flex justify-content-between">
-                <span class="cart_title">{{translate('shipping')}}</span>
+                <span class="cart_title">
+                    @if($adminFlatShippingEnabled)
+                        {{translate('shipping')}} ({{ translate('admin_flat_rate') }})
+                    @else
+                        {{translate('shipping')}}
+                    @endif
+                </span>
                 <span class="cart_value">
                     {{ webCurrencyConverter(amount: $totalShippingCost) }}
                 </span>
@@ -157,7 +164,8 @@
         @endif
 
         <div class="pt-4">
-            <a class="btn btn--primary btn-block proceed_to_next_button {{$cart->count() <= 0 ? 'custom-disabled' : ''}} action-checkout-function">{{translate('proceed_to_Checkout')}}</a>
+            @php($checkoutRoute = $adminFlatShippingEnabled ? route('one-page-checkout') : route('checkout-details'))
+            <a href="{{ $checkoutRoute }}" class="btn btn--primary btn-block proceed_to_next_button {{$cart->count() <= 0 ? 'custom-disabled' : ''}} action-checkout-function">{{translate('proceed_to_Checkout')}}</a>
         </div>
 
         <div class="d-flex justify-content-center mt-3">
@@ -175,7 +183,9 @@
         &nbsp; <strong
                 class="text-base">{{ webCurrencyConverter(amount: $subTotal+$totalTax+$totalShippingCost-$coupon_dis-$totalDiscountOnProduct-$orderWiseShippingDiscount) }}</strong>
     </div>
+    @php($checkoutRoute = $adminFlatShippingEnabled ? route('one-page-checkout') : route('checkout-details'))
     <a data-route="{{ Route::currentRouteName() }}"
+       href="{{ $checkoutRoute }}"
        class="btn btn--primary btn-block proceed_to_next_button text-capitalize {{$cart->count() <= 0 ? 'custom-disabled' : ''}} action-checkout-function">{{translate('proceed_to_checkout')}}</a>
 </div>
 

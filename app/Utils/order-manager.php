@@ -555,6 +555,26 @@ class OrderManager
                 $shipping_type = isset($seller_shipping) == true ? $seller_shipping->shipping_type : 'order_wise';
             }
         }
+        
+        // Calculate shipping cost with admin flat shipping logic
+        // For admin flat shipping: charge only on the FIRST order in the group, 0 for others
+        $shippingCost = 0;
+        $adminFlatShippingEnabled = Helpers::isAdminFlatShippingEnabled();
+        
+        if ($adminFlatShippingEnabled) {
+            // Check if this is the first order in the order_group_id
+            $existingOrdersInGroup = Order::where('order_group_id', $data['order_group_id'])->exists();
+            if (!$existingOrdersInGroup) {
+                // This is the first order - apply admin flat shipping rate
+                $shippingCost = Helpers::getAdminFlatShippingRate();
+            } else {
+                // Subsequent orders in the same group - no shipping cost
+                $shippingCost = 0;
+            }
+        } else {
+            // Legacy shipping calculation
+            $shippingCost = CartManager::get_shipping_cost(groupId: $data['cart_group_id'], type: 'checked');
+        }
         $or = [
             'id' => $order_id,
             'verification_code' => rand(100000, 999999),
@@ -583,7 +603,7 @@ class OrderManager
             'billing_address' => $billing_address_id,
             'billing_address_data' => ShippingAddress::find($billing_address_id),
             'shipping_responsibility' => getWebConfig(name: 'shipping_method'),
-            'shipping_cost' => CartManager::get_shipping_cost(groupId: $data['cart_group_id'], type: 'checked'),
+            'shipping_cost' => $shippingCost,
             'extra_discount' => $freeShippingDiscount,
             'extra_discount_type' => $free_shipping_type,
             'free_delivery_bearer' => $seller_data->seller_is == 'seller' ? $free_shipping_responsibility : 'admin',

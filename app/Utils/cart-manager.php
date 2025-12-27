@@ -131,8 +131,58 @@ class CartManager
             ->toArray();
     }
 
+    /**
+     * Get shipping cost for cart
+     * 
+     * When admin flat shipping is enabled:
+     * - Returns full shipping rate when $groupId is null (for total cart shipping)
+     * - Returns 0 when $groupId is specified (to prevent per-group multiplication)
+     * This ensures shipping is charged only once at cart level, not per vendor group.
+     * 
+     * @param string|null $groupId Cart group ID (vendor-specific)
+     * @param string|null $type Filter type ('checked' or null)
+     * @return float Shipping cost
+     */
     public static function get_shipping_cost($groupId = null, $type = null)
     {
+        // Use admin flat shipping rate - charged once per entire cart, not per vendor/group
+        $adminFlatShippingEnabled = Helpers::isAdminFlatShippingEnabled();
+        
+        if ($adminFlatShippingEnabled) {
+            // Check if there are any physical products in the cart
+            $hasPhysicalProducts = Cart::where(['product_type' => 'physical'])
+                ->whereHas('product', function ($query) {
+                    return $query->active();
+                })
+                ->when(($groupId == null && $type != 'checked'), function ($query) {
+                    return $query->whereIn('cart_group_id', CartManager::get_cart_group_ids());
+                })
+                ->when(($groupId == null && $type == 'checked'), function ($query) {
+                    return $query->whereIn('cart_group_id', CartManager::get_cart_group_ids(type: 'checked'));
+                })
+                ->when($groupId != null, function ($query) use ($groupId) {
+                    return $query->where(['cart_group_id' => $groupId]);
+                })
+                ->when($type == 'checked', function ($query) {
+                    return $query->where(['is_checked' => 1]);
+                })
+                ->exists();
+            
+            if ($hasPhysicalProducts) {
+                // Return admin flat shipping rate only once for the entire cart
+                // When groupId is null, return the full rate; when specific group, return 0 (to avoid multiplication)
+                if ($groupId == null) {
+                    return Helpers::getAdminFlatShippingRate();
+                } else {
+                    // For specific group, return 0 to prevent per-group shipping charges
+                    // The total shipping is added at the cart level, not per group
+                    return 0;
+                }
+            }
+            return 0;
+        }
+        
+        // Legacy code (kept for backward compatibility if admin flat shipping is disabled)
         $cost = 0;
 
         $cartShippingCost = Cart::where(['product_type' => 'physical'])
