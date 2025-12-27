@@ -165,16 +165,19 @@ class CartScreenState extends State<CartScreen> {
                   }
                 }
               }
-              for(int i=0; i<shippingController.chosenShippingList.length; i++){
-                if(shippingController.chosenShippingList[i].isCheckItemExist == 1 && !onlyDigital) {
-                  shippingAmount += shippingController.chosenShippingList[i].shippingCost!;
-                }
-              }
-
+              
+              // Calculate shipping amount
               // For admin flat shipping, use the admin flat rate only once
               if (shippingController.isAdminFlatShipping && !onlyDigital) {
                 shippingAmount = shippingController.adminFlatShippingCost;
               } else {
+                // Original logic for non-admin flat shipping
+                for(int i=0; i<shippingController.chosenShippingList.length; i++){
+                  if(shippingController.chosenShippingList[i].isCheckItemExist == 1 && !onlyDigital) {
+                    shippingAmount += shippingController.chosenShippingList[i].shippingCost!;
+                  }
+                }
+                
                 for(int j = 0; j< cartList.length; j++){
                   if(cartList[j].isChecked!) {
                     shippingAmount += cart.cartList[j].shippingCost ?? 0;

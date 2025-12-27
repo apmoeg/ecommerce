@@ -107,7 +107,15 @@ class CheckoutScreenState extends State<CheckoutScreen> {
 
                           Padding(padding: const EdgeInsets.all(Dimensions.paddingSizeDefault),
                             child: CustomButton(onTap: () async {
-                                if(orderProvider.addressIndex == null && widget.hasPhysical) {
+                                // Validate payment method first
+                                bool hasPaymentMethod = orderProvider.paymentMethodIndex != -1 ||
+                                    orderProvider.isCODChecked ||
+                                    orderProvider.isWalletChecked ||
+                                    orderProvider.isOfflineChecked;
+
+                                if (!hasPaymentMethod) {
+                                  showCustomSnackBar(getTranslated('please_select_payment_method', context) ?? 'Please select a payment method', context, isToaster: true);
+                                } else if(orderProvider.addressIndex == null && widget.hasPhysical) {
                                   showCustomSnackBar(getTranslated('select_a_shipping_address', context), context, isToaster: true);
                                 } else if((orderProvider.billingAddressIndex == null && !widget.hasPhysical &&  !_billingAddress)) {
                                   showCustomSnackBar(getTranslated('you_cant_place_order_of_digital_product_without_billing_address', context), context, isToaster: true);
@@ -189,10 +197,8 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                           }}), dismissible: false, willFlip: true);
                                     }
                                     else {
-                                      showModalBottomSheet(
-                                        context: context, isScrollControlled: true, backgroundColor: Colors.transparent,
-                                        builder: (c) => PaymentMethodBottomSheetWidget(onlyDigital: widget.onlyDigital),
-                                      );
+                                      // No payment method selected - show inline error instead of modal
+                                      showCustomSnackBar(getTranslated('please_select_payment_method', context) ?? 'Please select a payment method', context, isToaster: true);
                                     }
                                   }
                                 }
