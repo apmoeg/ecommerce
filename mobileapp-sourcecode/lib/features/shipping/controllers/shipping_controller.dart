@@ -30,6 +30,11 @@ class ShippingController extends ChangeNotifier {
   String? get addOrderStatusErrorText => _updateQuantityErrorText;
   bool get isLoading => _isLoading;
 
+  // Admin flat shipping properties
+  bool _isAdminFlatShipping = false;
+  bool get isAdminFlatShipping => _isAdminFlatShipping;
+  double _adminFlatShippingCost = 0.0;
+  double get adminFlatShippingCost => _adminFlatShippingCost;
 
   final List<int> _chosenShippingMethodIndex =[];
   List<int> get chosenShippingMethodIndex=>_chosenShippingMethodIndex;
@@ -41,6 +46,29 @@ class ShippingController extends ChangeNotifier {
   Future<void> getShippingMethod(BuildContext context, List<List<CartModel>> cartProdList) async {
     _isLoading = true;
     Provider.of<CartController>(context, listen: false).getCartDataLoaded();
+    
+    // Check first seller to see if admin flat shipping is enabled
+    if (cartProdList.isNotEmpty && cartProdList[0].isNotEmpty) {
+      ApiResponse checkResponse = await shippingServiceInterface.getShippingMethod(
+        cartProdList[0][0].sellerId,
+        cartProdList[0][0].sellerIs
+      );
+      
+      if (checkResponse.response != null && checkResponse.response!.statusCode == 200) {
+        // Check if response indicates admin flat shipping
+        if (checkResponse.response!.data is Map && 
+            checkResponse.response!.data['shipping_type'] == 'admin_flat_shipping') {
+          _isAdminFlatShipping = true;
+          _adminFlatShippingCost = checkResponse.response!.data['admin_flat_rate']?.toDouble() ?? 0.0;
+          _shippingList = [];
+          _isLoading = false;
+          notifyListeners();
+          return;
+        }
+      }
+    }
+    
+    // Original logic for non-admin flat shipping
     List<int?> sellerIdList = [];
     List<String?> sellerTypeList = [];
     List<String?> groupList = [];
@@ -97,6 +125,16 @@ class ShippingController extends ChangeNotifier {
     await getChosenShippingMethod(context);
     ApiResponse apiResponse = await shippingServiceInterface.getShippingMethod(1,'admin');
     if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      // Check if response indicates admin flat shipping
+      if (apiResponse.response!.data is Map && 
+          apiResponse.response!.data['shipping_type'] == 'admin_flat_shipping') {
+        _isAdminFlatShipping = true;
+        _adminFlatShippingCost = apiResponse.response!.data['admin_flat_rate']?.toDouble() ?? 0.0;
+        _isLoading = false;
+        notifyListeners();
+        return;
+      }
+      
       _shippingList!.add(ShippingModel(-1, '', []));
       List<ShippingMethodModel> shippingMethodList =[];
       apiResponse.response!.data.forEach((shipping) => shippingMethodList.add(ShippingMethodModel.fromJson(shipping)));
@@ -128,6 +166,16 @@ class ShippingController extends ChangeNotifier {
   Future<void> getChosenShippingMethod(BuildContext context) async {
     ApiResponse apiResponse = await shippingServiceInterface.getChosenShippingMethod();
     if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      // Check if response indicates admin flat shipping
+      if (apiResponse.response!.data is Map && 
+          apiResponse.response!.data['shipping_type'] == 'admin_flat_shipping') {
+        _isAdminFlatShipping = true;
+        _adminFlatShippingCost = apiResponse.response!.data['shipping_cost']?.toDouble() ?? 0.0;
+        _chosenShippingList = [];
+        notifyListeners();
+        return;
+      }
+      
       _chosenShippingList = [];
       apiResponse.response!.data.forEach((shipping) => _chosenShippingList.add(ChosenShippingMethodModel.fromJson(shipping)));
       notifyListeners();

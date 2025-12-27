@@ -171,9 +171,14 @@ class CartScreenState extends State<CartScreen> {
                 }
               }
 
-              for(int j = 0; j< cartList.length; j++){
-                if(cartList[j].isChecked!) {
-                  shippingAmount += cart.cartList[j].shippingCost ?? 0;
+              // For admin flat shipping, use the admin flat rate only once
+              if (shippingController.isAdminFlatShipping && !onlyDigital) {
+                shippingAmount = shippingController.adminFlatShippingCost;
+              } else {
+                for(int j = 0; j< cartList.length; j++){
+                  if(cartList[j].isChecked!) {
+                    shippingAmount += cart.cartList[j].shippingCost ?? 0;
+                  }
                 }
               }
 
@@ -234,7 +239,7 @@ class CartScreenState extends State<CartScreen> {
                               //   }
                               // }
 
-                               if (configProvider.configModel!.shippingMethod =='sellerwise_shipping') {
+                               if (configProvider.configModel!.shippingMethod =='sellerwise_shipping' && !shippingController.isAdminFlatShipping) {
                                  for (int index = 0; index < sellerGroupList.length; index++) {
                                    bool hasPhysical = false;
                                    for(CartModel cart in cartProductList[index]) {
@@ -460,7 +465,7 @@ class CartScreenState extends State<CartScreen> {
                                                   ]))),
 
                                         SizedBox(width: 200, child: configProvider.configModel!.shippingMethod =='sellerwise_shipping' &&
-                                            sellerGroupList[index].shippingType == 'order_wise' && hasPhysical ?
+                                            sellerGroupList[index].shippingType == 'order_wise' && hasPhysical && !shippingController.isAdminFlatShipping ?
 
                                         Padding(padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeDefault),
                                           child: InkWell(onTap: () {
@@ -507,7 +512,7 @@ class CartScreenState extends State<CartScreen> {
                                           '${PriceConverter.convertPrice(context, sellerGroupList[index].minimumOrderAmountInfo)}',
                                         style: textRegular.copyWith(color: Theme.of(context).colorScheme.error),),),
 
-                                    if(configProvider.configModel!.shippingMethod == 'sellerwise_shipping' && sellerGroupList[index].shippingType == 'order_wise' && hasPhysical)
+                                    if(configProvider.configModel!.shippingMethod == 'sellerwise_shipping' && sellerGroupList[index].shippingType == 'order_wise' && hasPhysical && !shippingController.isAdminFlatShipping)
                                       Padding(padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeSmall),
                                       child: (shippingController.shippingList == null ||
                                           shippingController.shippingList![index].shippingMethodList == null ||
