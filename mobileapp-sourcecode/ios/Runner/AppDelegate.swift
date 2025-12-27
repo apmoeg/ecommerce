@@ -13,7 +13,7 @@ import FBSDKLoginKit
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
     FirebaseApp.configure()
-    GMSServices.provideAPIKey("AIzaSyAwx4NQE5sVIs4oJJNuIK9VGxW4Vq8qXLw")
+    GMSServices.provideAPIKey("")
     GeneratedPluginRegistrant.register(with: self)
     FlutterDownloaderPlugin.setPluginRegistrantCallback(registerPlugins)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
