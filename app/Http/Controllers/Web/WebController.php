@@ -434,6 +434,75 @@ class WebController extends Controller
         ]);
     }
 
+    public function one_page_checkout(Request $request)
+    {
+        if (
+            (!auth('customer')->check() || Cart::where(['customer_id' => auth('customer')->id()])->count() < 1)
+            && (!getWebConfig(name: 'guest_checkout') || !session()->has('guest_id') || !session('guest_id'))
+        ) {
+            Toastr::error(translate('invalid_access'));
+            return redirect('/');
+        }
+        ProductManager::updateProductPriceInCartList(request: $request);
+
+        $response = self::checkValidationForCheckoutPages($request);
+        if ($response['status'] == 0) {
+            foreach ($response['message'] as $message) {
+                Toastr::error($message);
+            }
+            return isset($response['redirect']) ? redirect($response['redirect']) : redirect('/');
+        }
+
+        $countryRestrictStatus = getWebConfig(name: 'delivery_country_restriction');
+        $zipRestrictStatus = getWebConfig(name: 'delivery_zip_code_area_restriction');
+        $countries = $countryRestrictStatus ? $this->get_delivery_country_array() : COUNTRIES;
+        $billingInputByCustomer = getWebConfig(name: 'billing_input_by_customer');
+        $defaultLocation = getWebConfig(name: 'default_location');
+
+        $user = Helpers::getCustomerInformation($request);
+        $shippingAddresses = ShippingAddress::where([
+            'customer_id' => $user == 'offline' ? session('guest_id') : auth('customer')->id(),
+            'is_guest' => $user == 'offline' ? 1 : '0',
+        ])->get();
+
+        // Payment method data
+        $cartItemGroupIDs = CartManager::get_cart_group_ids(type: 'checked');
+        $cartGroupList = Cart::with(['product'])->whereHas('product', function ($query) {
+            return $query->active();
+        })->whereIn('cart_group_id', $cartItemGroupIDs)->where(['is_checked' => 1])->get()->groupBy('cart_group_id');
+
+        $isPhysicalProductExistArray = [];
+        foreach ($cartGroupList as $groupId => $cartGroup) {
+            $isPhysicalProductExist = false;
+            foreach ($cartGroup as $cart) {
+                if ($cart->product_type == 'physical') {
+                    $isPhysicalProductExist = true;
+                }
+            }
+            $isPhysicalProductExistArray[$groupId] = $isPhysicalProductExist;
+        }
+
+        $cashOnDeliveryBtnShow = !in_array(false, $isPhysicalProductExistArray);
+        $cashOnDeliveryStatus = getWebConfig(name: 'cash_on_delivery');
+        $digitalPaymentStatus = getWebConfig(name: 'digital_payment');
+        $walletStatus = getWebConfig(name: 'wallet_status');
+
+        return view(VIEW_FILE_NAMES['one_page_checkout'], [
+            'physical_product_view' => $response['physical_product_view'],
+            'country_restrict_status' => $countryRestrictStatus,
+            'zip_restrict_status' => $zipRestrictStatus,
+            'countries' => $countries,
+            'billing_input_by_customer' => $billingInputByCustomer,
+            'default_location' => $defaultLocation,
+            'shipping_addresses' => $shippingAddresses,
+            'billing_addresses' => $shippingAddresses,
+            'cash_on_delivery' => $cashOnDeliveryStatus,
+            'digital_payment' => $digitalPaymentStatus,
+            'wallet_status' => $walletStatus,
+            'cashOnDeliveryBtnShow' => $cashOnDeliveryBtnShow,
+        ]);
+    }
+
     public function checkout_payment(Request $request): View|RedirectResponse
     {
         if (!session('address_id') && !session('billing_address_id')) {

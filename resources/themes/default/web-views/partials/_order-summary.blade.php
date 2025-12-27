@@ -164,7 +164,8 @@
         @endif
 
         <div class="pt-4">
-            <a class="btn btn--primary btn-block proceed_to_next_button {{$cart->count() <= 0 ? 'custom-disabled' : ''}} action-checkout-function">{{translate('proceed_to_Checkout')}}</a>
+            @php($checkoutRoute = $adminFlatShippingEnabled ? route('one-page-checkout') : route('checkout-details'))
+            <a href="{{ $checkoutRoute }}" class="btn btn--primary btn-block proceed_to_next_button {{$cart->count() <= 0 ? 'custom-disabled' : ''}} action-checkout-function">{{translate('proceed_to_Checkout')}}</a>
         </div>
 
         <div class="d-flex justify-content-center mt-3">
@@ -182,7 +183,9 @@
         &nbsp; <strong
                 class="text-base">{{ webCurrencyConverter(amount: $subTotal+$totalTax+$totalShippingCost-$coupon_dis-$totalDiscountOnProduct-$orderWiseShippingDiscount) }}</strong>
     </div>
+    @php($checkoutRoute = $adminFlatShippingEnabled ? route('one-page-checkout') : route('checkout-details'))
     <a data-route="{{ Route::currentRouteName() }}"
+       href="{{ $checkoutRoute }}"
        class="btn btn--primary btn-block proceed_to_next_button text-capitalize {{$cart->count() <= 0 ? 'custom-disabled' : ''}} action-checkout-function">{{translate('proceed_to_checkout')}}</a>
 </div>
 

@@ -51,6 +51,7 @@ return [
     'modal_for_social_media_user_view' => 'layouts.front-end.partials.modal._social-media-user-modal',
     'cart_list' => 'web-views.cart.cart-list',
     'order_shipping' => 'web-views.checkout.shipping',
+    'one_page_checkout' => 'web-views.checkout.one-page-checkout',
     'payment_details' => 'web-views.checkout.payment',
     'order_complete' => 'web-views.checkout.complete',
     'products_mobile_nav_partials' => 'layouts.front-end.partials._cart',
