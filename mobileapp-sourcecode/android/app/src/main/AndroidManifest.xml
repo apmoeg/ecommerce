@@ -43,7 +43,7 @@
     android:networkSecurityConfig="@xml/network_security_config"
         android:icon="@mipmap/ic_launcher">
 
-        <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyAwx4NQE5sVIs4oJJNuIK9VGxW4Vq8qXLw" />
+        <meta-data android:name="com.google.android.geo.API_KEY" android:value="" />
 
         <activity
             android:name=".MainActivity"
