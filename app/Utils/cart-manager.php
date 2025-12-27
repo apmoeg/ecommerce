@@ -131,6 +131,18 @@ class CartManager
             ->toArray();
     }
 
+    /**
+     * Get shipping cost for cart
+     * 
+     * When admin flat shipping is enabled:
+     * - Returns full shipping rate when $groupId is null (for total cart shipping)
+     * - Returns 0 when $groupId is specified (to prevent per-group multiplication)
+     * This ensures shipping is charged only once at cart level, not per vendor group.
+     * 
+     * @param string|null $groupId Cart group ID (vendor-specific)
+     * @param string|null $type Filter type ('checked' or null)
+     * @return float Shipping cost
+     */
     public static function get_shipping_cost($groupId = null, $type = null)
     {
         // Use admin flat shipping rate - charged once per entire cart, not per vendor/group

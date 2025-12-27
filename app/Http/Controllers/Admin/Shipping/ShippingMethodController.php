@@ -165,8 +165,10 @@ class ShippingMethodController extends BaseController
     {
         $request->validate([
             'admin_flat_shipping_rate' => 'required|numeric|min:0',
-            'admin_flat_shipping_status' => 'required|in:0,1',
         ]);
+        
+        // Handle checkbox: if not present in request, it means unchecked (0)
+        $status = $request->has('admin_flat_shipping_status') && $request['admin_flat_shipping_status'] == '1' ? '1' : '0';
         
         $this->businessSettingRepo->updateOrInsert(
             type: 'admin_flat_shipping_rate', 
@@ -175,10 +177,10 @@ class ShippingMethodController extends BaseController
         
         $this->businessSettingRepo->updateOrInsert(
             type: 'admin_flat_shipping_status', 
-            value: $request['admin_flat_shipping_status']
+            value: $status
         );
         
-        Toastr::success(translate('Admin flat shipping settings updated successfully'));
+        Toastr::success(translate('settings_updated_successfully'));
         return redirect()->back();
     }
 

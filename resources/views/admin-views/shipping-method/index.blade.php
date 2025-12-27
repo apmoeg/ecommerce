@@ -145,7 +145,6 @@
                                            data-off-message="<p>{{translate('the_default_shipping_methods_will_be_used').'.'}}</p>">
                                     <span class="switcher_control"></span>
                                 </label>
-                                <input type="hidden" name="admin_flat_shipping_status" value="0">
                             </div>
                             <div class="mt-2">
                                 <p class="text-muted">

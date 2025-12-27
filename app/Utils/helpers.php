@@ -1019,7 +1019,8 @@ if (!function_exists('currency_converter')) {
     public static function isAdminFlatShippingEnabled(): bool
     {
         $status = getWebConfig(name: 'admin_flat_shipping_status');
-        return $status ? (bool)$status : true;
+        // Migration default is '1' (enabled). Return true only if explicitly enabled.
+        return $status !== null && $status == '1';
     }
 }
 

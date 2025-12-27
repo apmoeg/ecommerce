@@ -563,8 +563,8 @@ class OrderManager
         
         if ($adminFlatShippingEnabled) {
             // Check if this is the first order in the order_group_id
-            $existingOrdersInGroup = Order::where('order_group_id', $data['order_group_id'])->count();
-            if ($existingOrdersInGroup == 0) {
+            $existingOrdersInGroup = Order::where('order_group_id', $data['order_group_id'])->exists();
+            if (!$existingOrdersInGroup) {
                 // This is the first order - apply admin flat shipping rate
                 $shippingCost = Helpers::getAdminFlatShippingRate();
             } else {
